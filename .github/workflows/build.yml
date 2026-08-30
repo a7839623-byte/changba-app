@@ -22,19 +22,18 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev python3-dev zip unzip openjdk-17-jdk aidl
+
         pip install --upgrade pip
         pip install buildozer cython
 
-    - name: Setup Android SDK manually
+    - name: Pre-setup Android SDK & Accept Licenses
       run: |
-        # 建立授權目錄與同意檔
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
-        
-        # 預先同意所有可用的 SDK 授權哈希值
+
+        # 預先寫入 SDK 全套授權 Hash，完全跳過詢問
         mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
-        echo -e "\n89330d2226346577006985165f83726ee35513d7\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63718c41553280c7f05347c701d67593" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo -e "\n84831b9402116e26f522031150239e4100d365dd" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        echo -e "\n89330d2226346577006985165f83726ee35513d7\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63718c41553280c7f05347c701d67593\n84831b9402116e26f522031150239e4100d365dd" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
 
     - name: Build APK
       run: |
