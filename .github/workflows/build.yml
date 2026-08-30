@@ -22,11 +22,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flet
-        
     - name: Build APK (Auto-yes for prompts)
       run: |
-        yes | flet build apk --android-permissions "android.permission.MANAGE_EXTERNAL_STORAGE android.permission.READ_MEDIA_AUDIO android.permission.READ_EXTERNAL_STORAGE android.permission.WRITE_EXTERNAL_STORAGE" .
-        
+        yes | flet build apk .
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
