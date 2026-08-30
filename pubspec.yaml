@@ -1,0 +1,13 @@
+name: changba_app
+description: "唱吧音訊一鍵替換助手"
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+flet:
+  permissions:
+    - android.permission.READ_EXTERNAL_STORAGE
+    - android.permission.WRITE_EXTERNAL_STORAGE
+    - android.permission.MANAGE_EXTERNAL_STORAGE
