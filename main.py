@@ -45,18 +45,19 @@ def main(page: ft.Page):
     )
 
     # ---------------- Flet Native File Pickers ----------------
-    # 1. 微信音訊檔案選擇器
+    # 1. 微信音訊檔案選擇器 (修正宣告方式)
+    file_picker_wechat = ft.FilePicker()
     def on_wechat_file_result(e: ft.FilePickerResultEvent):
         if e.files and len(e.files) > 0:
             txt_wechat_path.value = e.files[0].path
             txt_status_text.value = "已選擇微信音訊"
             txt_status_text.color = "blue"
             page.update()
-
-    file_picker_wechat = ft.FilePicker(on_result=on_wechat_file_result)
+    file_picker_wechat.on_result = on_wechat_file_result
     page.overlay.append(file_picker_wechat)
 
-    # 2. 唱吧資料夾選擇器
+    # 2. 唱吧資料夾選擇器 (修正宣告方式)
+    file_picker_changba = ft.FilePicker()
     def on_changba_dir_result(e: ft.FilePickerResultEvent):
         if e.path:
             txt_changba_path.value = e.path
@@ -68,8 +69,7 @@ def main(page: ft.Page):
             txt_status_text.value = "已選擇唱吧資料夾"
             txt_status_text.color = "blue"
             page.update()
-
-    file_picker_changba = ft.FilePicker(on_result=on_changba_dir_result)
+    file_picker_changba.on_result = on_changba_dir_result
     page.overlay.append(file_picker_changba)
     # ---------------------------------------------------------
 
