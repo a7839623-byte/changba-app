@@ -23,14 +23,14 @@ jobs:
       with:
         channel: 'stable'
 
-    - name: Install Flet
+    - name: Install Flet Dependencies
       run: |
         pip install --upgrade pip
-        pip install flet
+        pip install flet flet-build
 
     - name: Build APK with Flet
       run: |
-        flet build apk -y
+        flet build apk
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
