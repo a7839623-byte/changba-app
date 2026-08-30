@@ -21,29 +21,43 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev python3-dev zip unzip openjdk-17-jdk aidl wget
+        sudo apt-get install -y \
+          build-essential \
+          ccache \
+          git \
+          libffi-dev \
+          libssl-dev \
+          python3-dev \
+          zip \
+          unzip \
+          openjdk-17-jdk \
+          aidl \
+          wget \
+          autoconf \
+          automake \
+          libtool \
+          pkg-config \
+          cmake \
+          zlib1g-dev \
+          libltdl-dev
 
         pip install --upgrade pip
-        pip install buildozer cython
+        pip install buildozer "cython<3.0.0"
 
     - name: Setup Android Command-Line Tools & Accept Licenses
       run: |
-        # 1. 建立 SDK 基礎目錄結構
         mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
         mkdir -p $HOME/.android
         touch $HOME/.android/repositories.cfg
 
-        # 2. 手動下載並解壓官方 commandlinetools
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
         unzip -q cmdline-tools.zip
         
-        # 3. 建立相容性路徑 (同時修正新舊版 sdkmanager 放置位置)
         mv cmdline-tools $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
         mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools
         cp -r $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/* $HOME/.buildozer/android/platform/android-sdk/tools/ 2>/dev/null || true
         rm cmdline-tools.zip
 
-        # 4. 預先寫入全套 SDK License
         mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
         echo -e "\n89330d2226346577006985165f83726ee35513d7\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63718c41553280c7f05347c701d67593\n84831b9402116e26f522031150239e4100d365dd" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
 
