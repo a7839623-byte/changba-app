@@ -59,13 +59,11 @@ def main(page: ft.Page):
     # 2. 唱吧資料夾選擇器
     def on_changba_dir_result(e: ft.FilePickerResultEvent):
         if e.path:
-            # 使用者選取了資料夾
             txt_changba_path.value = e.path
             txt_status_text.value = "已選擇唱吧資料夾"
             txt_status_text.color = "blue"
             page.update()
         elif e.files and len(e.files) > 0:
-            # 備用邏輯：若使用者點進資料夾選擇了裡面任一檔案，自動抓取該目錄
             txt_changba_path.value = os.path.dirname(e.files[0].path)
             txt_status_text.value = "已選擇唱吧資料夾"
             txt_status_text.color = "blue"
@@ -77,21 +75,33 @@ def main(page: ft.Page):
 
     # 按鈕 1: 選擇微信音訊 mp3
     def btn_wechat_click(e):
-        initial_dir = PATH_WECHAT if os.path.exists(PATH_WECHAT) else None
-        file_picker_wechat.pick_files(
-            dialog_title="選擇微信下載的 MP3 檔案",
-            initial_directory=initial_dir,
-            allowed_extensions=["mp3", "wav", "m4a", "aac"],
-            file_type=ft.FilePickerFileType.AUDIO
-        )
+        try:
+            init_dir = PATH_WECHAT if os.path.exists(PATH_WECHAT) else None
+            file_picker_wechat.pick_files(
+                dialog_title="選擇微信下載的 MP3 檔案",
+                initial_directory=init_dir,
+                allowed_extensions=["mp3", "wav", "m4a", "aac"],
+                file_type=ft.FilePickerFileType.AUDIO
+            )
+        except Exception:
+            file_picker_wechat.pick_files(
+                dialog_title="選擇微信下載的 MP3 檔案",
+                allowed_extensions=["mp3", "wav", "m4a", "aac"],
+                file_type=ft.FilePickerFileType.AUDIO
+            )
 
     # 按鈕 2: 選擇唱吧備份資料夾
     def btn_changba_click(e):
-        initial_dir = PATH_CHANGBA if os.path.exists(PATH_CHANGBA) else None
-        file_picker_changba.get_directory_path(
-            dialog_title="選擇有編號的唱吧備份資料夾",
-            initial_directory=initial_dir
-        )
+        try:
+            init_dir = PATH_CHANGBA if os.path.exists(PATH_CHANGBA) else None
+            file_picker_changba.get_directory_path(
+                dialog_title="選擇有編號的唱吧備份資料夾",
+                initial_directory=init_dir
+            )
+        except Exception:
+            file_picker_changba.get_directory_path(
+                dialog_title="選擇有編號的唱吧備份資料夾"
+            )
 
     # 按鈕 3: 執行解壓、自動改名替換與重新打包
     def btn_replace_click(e):
