@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "changba-app"
+version = "0.1.0"
+description = "Changba Audio Replacer"
+authors = ["Your Name <you@example.com>"]
+
+[tool.flet]
+org = "com.example"
+product = "changba-app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
