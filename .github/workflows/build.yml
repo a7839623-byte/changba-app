@@ -23,10 +23,10 @@ jobs:
       with:
         channel: 'stable'
 
-    - name: Install Flet Dependencies
+    - name: Install Flet
       run: |
         pip install --upgrade pip
-        pip install flet flet-build
+        pip install flet
 
     - name: Build APK with Flet
       run: |
