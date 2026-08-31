@@ -1,13 +1,16 @@
-[tool.poetry]
-name = "changba-app"
-version = "0.1.0"
-description = "Changba Audio Replacer"
-authors = ["Your Name <you@example.com>"]
-
 [tool.flet]
-org = "com.example"
-product = "changba-app"
+# 1. 應用程式在手機上顯示的名稱
+app_name = "唱吧音訊一鍵替換助手"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+# 2. ⚠️ 非常重要：請改成與你原本唱吧程式完全相同的包名（Package Name）
+package_name = "com.example.changbaapp" # 👈 請把這裡改成你真正的唱吧包名
+
+# 3. 版本號
+version = "1.0.0"
+
+# 🛠️ 真正能被 Flet 編譯器讀懂並注入 APK 的 Android 13 核心權限
+[tool.flet.android.permission]
+"android.permission.MANAGE_EXTERNAL_STORAGE" = true
+"android.permission.READ_MEDIA_AUDIO" = true
+"android.permission.READ_MEDIA_VIDEO" = true
+"android.permission.READ_MEDIA_IMAGES" = true
