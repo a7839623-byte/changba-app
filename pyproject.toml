@@ -1,17 +1,13 @@
 [project]
 name = "changba_assistant"
 dependencies = [
-    "flet>=0.25.0", # 請根據實際使用的 Flet 版本調整
+    "flet>=0.25.0",
 ]
 
 [tool.flet]
-# 1. 基礎宣告（確保底層 Flutter 插件初始化時載入相關服務）
-permissions = ["storage"] 
-
-[tool.flet.android.permission]
-# 2. 強行將頂級所有檔案存取權注入 AndroidManifest.xml
-"android.permission.MANAGE_EXTERNAL_STORAGE" = true
-
-# 3. 雖然 Android 13 主要看上面的權限，但為了相容性，傳統讀寫也建議一併強行補上
-"android.permission.READ_EXTERNAL_STORAGE" = true
-"android.permission.WRITE_EXTERNAL_STORAGE" = true
+# 正確且唯一的 Android 權限宣告清單
+permissions = [
+    "android.permission.MANAGE_EXTERNAL_STORAGE",
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.WRITE_EXTERNAL_STORAGE"
+]
