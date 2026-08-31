@@ -15,20 +15,13 @@ def main(page: ft.Page):
     page.window_width = 480
     page.window_height = 750
 
-    # 狀態提示文字
+    # 狀態提示文字（100% 還原您最原始的無事件、無報錯純文字）
     txt_status_text = ft.Text(
         "提示：Android 13 請先長按 App 圖示 -> 應用程式資訊 -> 權限 -> 勾選「允許管理所有檔案」才能正常運作。", 
         size=13, 
         weight="normal", 
         color="amber"
     )
-    
-    # 💥【超微創安全對接】格式已在下方完美對齊，不破壞任何原有介面與功能
-    if page.platform == ft.PagePlatform.ANDROID and not os.path.exists("/storage/emulated/0/Download"):
-        pkg = page.client_package_name if hasattr(page, "client_package_name") else "com.example.flet"
-        subprocess.Popen(["am", "start", "-a", "android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION", "-d", f"package:{pkg}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        txt_status_text.value = "⚠️ 偵測到無權限，已為您自動跳轉，請開啟「允許管理所有檔案」權限。"
-        txt_status_text.color = "orange"
 
     txt_status = ft.Container(
         content=txt_status_text,
@@ -59,7 +52,6 @@ def main(page: ft.Page):
 
     # 彈跳視窗：選擇微信 MP3 檔案
     def open_wechat_picker(e):
-        # 100% 安全網：確保任何崩潰都能被捕捉並顯示在介面上，絕對不卡死
         file_list_view = ft.ListView(expand=True, spacing=5, padding=10)
         
         def close_dlg():
@@ -76,7 +68,6 @@ def main(page: ft.Page):
             folder_path = txt_wechat_path.value.strip()
             target_dir = folder_path if os.path.isdir(folder_path) else os.path.dirname(folder_path)
             
-            # 在 Android 13 沒權限時，os.path.exists 可能直接返回 False 或拋出異常
             if os.path.exists(target_dir):
                 files = os.listdir(target_dir)
                 audio_files = [f for f in files if f.endswith(('.mp3', '.m4a', '.aac', '.wav'))]
@@ -86,27 +77,22 @@ def main(page: ft.Page):
                 else:
                     for f in audio_files:
                         full_path = os.path.join(target_dir, f)
-                        def select_file(e, p=full_path):
-                            txt_wechat_path.value = p
-                            close_dlg()
-                            page.update()
+                        def create_select_file_cb(p):
+                            return lambda e: [txt_wechat_path.__setattr__('value', p), close_dlg(), page.update()]
                         
                         file_list_view.controls.append(
-                            ft.TextButton(text=f"🎵 {f}", on_click=select_file)
+                            ft.TextButton(content=ft.Text(f"🎵 {f}"), on_click=create_select_file_cb(full_path))
                         )
             else:
                 file_list_view.controls.append(ft.Text(f"❌ 找不到目錄！\n原因：路徑不存在，或手機未開啟「管理所有檔案」權限。"))
-                # 同步更新主畫面的狀態欄
-                txt_status_text.value = "❌ 讀取失敗！請確認是否已手動開啟「管理所有檔案」權限。"
+                txt_status_text.value = "❌ 讀取失敗！請確認是否已點擊執行按鈕進行權限跳轉。"
                 txt_status_text.color = "red"
         
         except Exception as ex:
-            # 萬一發生權限遭拒或其他未知錯誤，直接強行印在彈窗內，防死機
-            file_list_view.controls.append(ft.Text(f"💥 系統阻擋或讀取錯誤:\n{str(ex)}\n\n請至手機設定開啟完整檔案存取權限。"))
+            file_list_view.controls.append(ft.Text(f"💥 系統阻擋或讀取錯誤:\n{str(ex)}"))
             txt_status_text.value = f"❌ 錯誤: {str(ex)}"
             txt_status_text.color = "red"
 
-        # 無論 try 裡面成功還是失敗，都「必須」強行把視窗彈出來，讓使用者知道发生什麼事
         page.dialog = dlg
         dlg.open = True
         page.update()
@@ -139,13 +125,11 @@ def main(page: ft.Page):
                 else:
                     for item in folders:
                         full_path = os.path.join(parent_path, item)
-                        def select_folder(e, p=full_path):
-                            txt_changba_path.value = p
-                            close_dlg()
-                            page.update()
+                        def create_select_folder_cb(p):
+                            return lambda e: [txt_changba_path.__setattr__('value', p), close_dlg(), page.update()]
                         
                         folder_list_view.controls.append(
-                            ft.TextButton(text=f"📁 {item}", on_click=select_folder)
+                            ft.TextButton(content=ft.Text(f"📁 {item}"), on_click=create_select_folder_cb(full_path))
                         )
             else:
                 folder_list_view.controls.append(ft.Text("❌ 無法存取外部儲存根目錄，請確認已勾選檔案管理權限。"))
@@ -162,6 +146,18 @@ def main(page: ft.Page):
 
     # 執行替換邏輯
     def btn_replace_click(e):
+        # 💥【超安全原生對接點】：當在 Android 且無權限時，直接引導跳轉
+        if page.platform == ft.PagePlatform.ANDROID and not os.path.exists("/storage/emulated/0/Download"):
+            try:
+                pkg = page.client_package_name if hasattr(page, "client_package_name") else "com.example.changbaapp"
+                subprocess.Popen(["am", "start", "-a", "android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION", "-d", f"package:{pkg}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                txt_status_text.value = "⏳ 偵測到無權限，已為您自動跳轉，請開啟後返回 App。"
+                txt_status_text.color = "orange"
+                page.update()
+                return
+            except:
+                pass
+
         source_audio = txt_wechat_path.value.strip()
         target_folder = txt_changba_path.value.strip()
 
@@ -202,7 +198,6 @@ def main(page: ft.Page):
             target_aac = os.path.join(extract_dir, "v_recording.aac")
             shutil.copyfile(source_audio, target_aac)
 
-            # 先移除舊的，再打包新的（防 Android 檔案鎖定機制）
             os.remove(target_zip)
             
             zip_base_name = os.path.join(target_folder, "record_files")
